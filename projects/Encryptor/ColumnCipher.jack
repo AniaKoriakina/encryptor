@@ -1,0 +1,167 @@
+class ColumnCipher {
+    // Получаем массив индексов столбцов на основе ключа
+    function Array getColumnOrder(String key) {
+        var int keyLength;
+        var Array order;
+        var int i;
+        var int temp;
+        var int j;
+
+        let keyLength = key.length();
+        let order = Array.new(keyLength);
+
+        // Заполняем массив индексами
+        let i = 0;
+        while (i < keyLength) {
+            let order[i] = i;
+            let i = i + 1;
+        }
+
+        // Сортируем индексы по значениям ключа
+        let i = 0;
+        while (i < keyLength - 1) {
+            let j = 0;
+            while (j < keyLength - i - 1) {
+                if (key.charAt(order[j]) > key.charAt(order[j + 1])) {
+                    let temp = order[j];
+                    let order[j] = order[j + 1];
+                    let order[j + 1] = temp;
+                }
+                let j = j + 1;
+            }
+            let i = i + 1;
+        }
+
+        return order;
+    }
+
+    function int mod(int a, int b) {
+        while (a > b - 1) {
+            let a = a - b;
+        }
+        return a;
+    }
+
+    // Шифрование
+    function String encrypt(String text, String key) {
+        var int textLength;
+        var int keyLength;
+        var int rows;
+        var int cols;
+        var int i;
+        var int j;
+        var int originalIndex;
+        var Array table;
+        var String result;
+        var Array columnOrder;
+
+        let textLength = text.length();
+        let keyLength = key.length();
+        let rows = (textLength / keyLength);
+        if (ColumnCipher.mod(textLength, keyLength) > 0) {
+            let rows = rows + 1;
+        }
+
+        let cols = keyLength;
+        let result = String.new(rows * cols);
+
+        let table = Array.new(rows * cols);
+
+        // Заполняем таблицу текстом построчно
+        let i = 0;
+        while (i < textLength) {
+            let table[i] = text.charAt(i);
+            let i = i + 1;
+        }
+
+        while (i < (rows * cols)) {
+            let table[i] = 32; // Пробел
+            let i = i + 1;
+        }
+
+        // Получаем порядок столбцов
+        let columnOrder = ColumnCipher.getColumnOrder(key);
+
+        // Шифруем текст по столбцам
+        let j = 0;
+        while (j < keyLength) {
+            let originalIndex = columnOrder[j];
+            let i = 0;
+            while (i < rows) {
+                do result.appendChar(table[(i * cols) + originalIndex]);
+                let i = i + 1;
+            }
+            let j = j + 1;
+        }
+
+        do table.dispose();
+        return result;
+    }
+
+    // Дешифровка
+    function String decrypt(String text, String key) {
+        var int textLength;
+        var int keyLength;
+        var int rows;
+        var int cols;
+        var int i;
+        var int j;
+        var int k;
+        var int originalIndex;
+        var Array table;
+        var String result;
+        var Array columnOrder;
+        var Array reverseOrder;
+
+        let textLength = text.length();
+        let keyLength = key.length();
+        let cols = keyLength;
+        let rows = (textLength / keyLength);
+        if (ColumnCipher.mod(textLength, keyLength) > 0) {
+            let rows = rows + 1;
+        }
+
+        let result = String.new(rows * cols);
+
+        let table = Array.new(rows * cols);
+
+        // Получаем порядок столбцов
+        let columnOrder = ColumnCipher.getColumnOrder(key);
+
+        // Создаем обратный порядок
+        let reverseOrder = Array.new(cols);
+        let j = 0;
+        while (j < keyLength) {
+            let reverseOrder[columnOrder[j]] = j;
+            let j = j + 1;
+        }
+
+        // Расшифровываем текст, заполняя таблицу
+        let j = 0;
+        let k = 0;
+        while (j < keyLength) {
+            let originalIndex = reverseOrder[j];
+            let i = 0;
+            while (i < rows) {
+                if (k < textLength) {
+                    let table[(i * cols) + originalIndex] = text.charAt(k);
+                    let k = k + 1;
+                }
+                let i = i + 1;
+            }
+            let j = j + 1;
+        }
+
+        // Читаем текст построчно
+        let i = 0;
+        while (i < (rows * cols)) {
+            if (i < textLength) {
+                do result.appendChar(table[i]);
+            }
+            let i = i + 1;
+        }
+
+        do table.dispose();
+        return result;
+    }
+}

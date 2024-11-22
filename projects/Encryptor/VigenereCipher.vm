@@ -1,0 +1,209 @@
+function VigenereCipher.encrypt 8
+push argument 0
+call String.length 1
+pop local 0
+push argument 1
+call String.length 1
+pop local 1
+push local 0
+call String.new 1
+pop local 7
+push constant 0
+pop local 2
+label WHILE_EXP0
+push local 2
+push local 0
+lt
+not
+if-goto WHILE_END0
+push argument 0
+push local 2
+call String.charAt 2
+pop local 3
+push local 2
+push local 2
+push local 1
+call Math.divide 2
+push local 1
+call Math.multiply 2
+sub
+pop local 4
+push argument 1
+push local 4
+call String.charAt 2
+pop local 5
+push local 3
+call VigenereCipher.isLetter 1
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push local 3
+push local 5
+push constant 0
+not
+call VigenereCipher.shiftChar 3
+pop local 6
+push local 7
+push local 6
+call String.appendChar 2
+pop temp 0
+goto IF_END0
+label IF_FALSE0
+push local 7
+push local 3
+call String.appendChar 2
+pop temp 0
+label IF_END0
+push local 2
+push constant 1
+add
+pop local 2
+goto WHILE_EXP0
+label WHILE_END0
+push local 7
+return
+function VigenereCipher.decrypt 8
+push argument 0
+call String.length 1
+pop local 0
+push argument 1
+call String.length 1
+pop local 1
+push local 0
+call String.new 1
+pop local 7
+push constant 0
+pop local 2
+label WHILE_EXP0
+push local 2
+push local 0
+lt
+not
+if-goto WHILE_END0
+push argument 0
+push local 2
+call String.charAt 2
+pop local 3
+push local 2
+push local 2
+push local 1
+call Math.divide 2
+push local 1
+call Math.multiply 2
+sub
+pop local 4
+push argument 1
+push local 4
+call String.charAt 2
+pop local 5
+push local 3
+call VigenereCipher.isLetter 1
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push local 3
+push local 5
+push constant 0
+call VigenereCipher.shiftChar 3
+pop local 6
+push local 7
+push local 6
+call String.appendChar 2
+pop temp 0
+goto IF_END0
+label IF_FALSE0
+push local 7
+push local 3
+call String.appendChar 2
+pop temp 0
+label IF_END0
+push local 2
+push constant 1
+add
+pop local 2
+goto WHILE_EXP0
+label WHILE_END0
+push local 7
+return
+function VigenereCipher.isLetter 0
+push argument 0
+push constant 64
+gt
+push argument 0
+push constant 91
+lt
+and
+push argument 0
+push constant 96
+gt
+push argument 0
+push constant 123
+lt
+and
+or
+return
+function VigenereCipher.shiftChar 3
+push argument 0
+push constant 64
+gt
+push argument 0
+push constant 91
+lt
+and
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 65
+pop local 0
+goto IF_END0
+label IF_FALSE0
+push constant 97
+pop local 0
+label IF_END0
+push argument 1
+push local 0
+sub
+pop local 1
+push argument 2
+not
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push local 1
+neg
+pop local 1
+label IF_FALSE1
+push argument 0
+push local 0
+sub
+push local 1
+add
+pop local 2
+label WHILE_EXP0
+push local 2
+push constant 0
+lt
+not
+if-goto WHILE_END0
+push local 2
+push constant 26
+add
+pop local 2
+goto WHILE_EXP0
+label WHILE_END0
+label WHILE_EXP1
+push local 2
+push constant 27
+gt
+not
+if-goto WHILE_END1
+push local 2
+push constant 26
+sub
+pop local 2
+goto WHILE_EXP1
+label WHILE_END1
+push local 2
+push local 0
+add
+return

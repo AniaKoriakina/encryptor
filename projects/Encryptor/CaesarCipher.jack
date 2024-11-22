@@ -1,0 +1,64 @@
+class CaesarCipher {
+    function String encrypt(String input, int shift) {
+        var int length;
+        var Array outputArray;
+        var int i;
+        var int currentChar;
+        var int newChar;
+        var String result;
+
+        let length = input.length();
+        let outputArray = Array.new(length);
+
+        let i = 0;
+        while (i < length) {
+            let currentChar = input.charAt(i);
+            if (CaesarCipher.isLetter(currentChar)) {
+                let newChar = CaesarCipher.shiftChar(currentChar, shift);
+                let outputArray[i] = newChar;
+            } else {
+                let outputArray[i] = currentChar;
+            }
+            let i = i + 1;
+        }
+
+        let result = String.new(length);
+        let i = 0;
+        while (i < length) {
+            do result.appendChar(outputArray[i]);
+            let i = i + 1;
+        }
+
+        do outputArray.dispose();
+        return result;
+    }
+
+    function boolean isLetter(int c) {
+        return ((c > 64) & (c < 91)) | ((c > 96) & (c < 123));
+    }
+
+    function int shiftChar(int c, int shift) {
+        var int base;
+        var int newChar;
+
+        if ((c > 64) & (c < 91)) {
+            let base = 65;
+        } else {
+            let base = 97;
+        }
+
+        let newChar = c - base + shift;
+
+        while (newChar > 25) {
+            let newChar = newChar - 26;
+        }
+        while (newChar < 0) {
+            let newChar = newChar + 26;
+        }
+        return newChar + base;
+    }
+
+    function String decrypt(String input, int shift) {
+        return CaesarCipher.encrypt(input, -shift);
+   }
+}

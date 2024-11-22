@@ -1,0 +1,102 @@
+class VigenereCipher {
+    function String encrypt(String text, String key) {
+        var int textLength;
+        var int keyLength;
+        var int i;
+        var int textChar;
+        var int keyIndex;
+        var int keyChar;
+        var int encryptedChar;
+        var String encryptedText;
+
+        let textLength = text.length();
+        let keyLength = key.length();
+        let encryptedText = String.new(textLength);
+
+        let i = 0;
+        while (i < textLength) {
+            let textChar = text.charAt(i); // Получаем символ текста
+            let keyIndex = i - ((i / keyLength) * keyLength);
+            let keyChar = key.charAt(keyIndex); // Соответствующий символ ключа
+
+            if (VigenereCipher.isLetter(textChar)) {
+                let encryptedChar = VigenereCipher.shiftChar(textChar, keyChar, true); // Шифрование
+                do encryptedText.appendChar(encryptedChar);
+            } else {
+                // Если символ не буква, просто добавляем его
+                do encryptedText.appendChar(textChar);
+            }
+            let i = i + 1;
+        }
+
+        return encryptedText;
+    }
+
+    function String decrypt(String text, String key) {
+        var int textLength;
+        var int keyLength;
+        var int i;
+        var int textChar;
+        var int keyIndex;
+        var int keyChar;
+        var int decryptedChar;
+        var String decryptedText;
+
+        let textLength = text.length();
+        let keyLength = key.length();
+        let decryptedText = String.new(textLength);
+
+        let i = 0;
+        while (i < textLength) {
+            let textChar = text.charAt(i); // Получаем символ текста
+            let keyIndex = i - ((i / keyLength) * keyLength);
+            let keyChar = key.charAt(keyIndex); // Соответствующий символ ключа
+
+            if (VigenereCipher.isLetter(textChar)) {
+                let decryptedChar = VigenereCipher.shiftChar(textChar, keyChar, false); // Расшифровка
+                do decryptedText.appendChar(decryptedChar);
+            } else {
+                // Если символ не буква, просто добавляем его
+                do decryptedText.appendChar(textChar);
+            }
+            let i = i + 1;
+        }
+
+        return decryptedText;
+    }
+
+    function boolean isLetter(int c) {
+        return ((c > 64) & (c < 91)) | ((c > 96) & (c < 123));
+    }
+
+    function int shiftChar(int textChar, int keyChar, boolean encrypt) {
+        var int base;
+        var int shift;
+        var int result;
+
+        if ((textChar > 64) & (textChar < 91)) {
+            let base = 65;
+        } else {
+            let base = 97;
+        }
+
+        let shift = keyChar - base;
+
+        if (~encrypt) {
+            let shift = -shift; 
+        }
+
+        let result = textChar - base + shift;
+
+        // Приведение результата в диапазон 0–25
+        while (result < 0) {
+            let result = result + 26;
+        }
+        while (result > 27) {
+            let result = result - 26;
+        }
+
+        // Возвращаем символ с учетом базы
+        return result + base;
+    }
+}
